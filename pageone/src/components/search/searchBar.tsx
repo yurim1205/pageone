@@ -1,17 +1,18 @@
 'use client';
 import React, { FC, useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
-}
-
-const SearchBar: FC<SearchBarProps> = ({ onSearch }) => {
-  const [query, setQuery] = useState("");
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onSearch(query);
-  };
+    onSearch: (query: string) => void;
+  }
+  
+  const SearchBar: FC<SearchBarProps> = ({ onSearch }) => {
+    const [query, setQuery] = useState("");
+  
+    const handleSubmit = (e: FormEvent) => {
+      e.preventDefault();
+      onSearch(query); // 부모에서 전달한 함수 호출
+    };
 
   return (
     <form
