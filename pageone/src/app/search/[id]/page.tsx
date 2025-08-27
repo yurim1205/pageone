@@ -55,32 +55,39 @@ export default function BookDetailPage() {
   if (!book) return <p className="text-center mt-10">책을 찾을 수 없습니다.</p>;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200">
+    <div className="p-6 max-w-[1200px] mx-auto bg-white rounded-2xl mt-10">
       {/* 책 표지 & 텍스트 */}
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-6 items-stretch justify-between">
         <img
           src={book.cover_url}
           alt={book.title}
-          className="w-full md:w-1/3 rounded-lg border border-gray-100 object-cover"
+          className="w-100 md:w-1/3 rounded-lg border border-gray-100 object-cover h-96"
         />
 
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-black mb-2">{book.title}</h1>
-          <p className="text-gray-600 mb-4">저자: {book.author}</p>
-          <p className="text-gray-800 leading-relaxed">{book.description}</p>
+        <div className="ml-10 flex-1 max-w-[600px] flex flex-col justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-black mb-2">{book.title}</h1>
+            <p className="text-gray-600 mb-4">{book.author}</p>
+            <p className="text-gray-800 leading-relaxed">{book.description}</p>
+          </div>
+
+          <button
+            className="w-full px-6 py-2 rounded-xl bg-gray-200 text-black
+                      shadow-lg hover:shadow-md
+                      transform transition-all duration-300 hover:-translate-y-1">
+            내 책장에 담기
+          </button>
         </div>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-gray-200 text-sm text-gray-500">
-      </div>
 
       {/* 추천 도서 */}
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-4 text-black">추천하는 도서</h2>
+      <div className="mt-20">
+        <h2 className="text-xl font-semibold mb-4 text-black text-center">이 도서와 함께 구매가 많이 된 도서</h2>
         {relatedLoading ? (
           <p className="text-gray-500">추천 도서를 불러오는 중...</p>
         ) : relatedBooks && relatedBooks.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-between">
             {relatedBooks.map((relatedBook) => (
               <Link
                 key={relatedBook.id}
