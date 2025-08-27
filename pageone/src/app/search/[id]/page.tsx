@@ -71,9 +71,7 @@ export default function BookDetailPage() {
         </div>
       </div>
 
-      {/* 등록일 */}
       <div className="mt-6 pt-4 border-t border-gray-200 text-sm text-gray-500">
-        등록일: {new Date(book.created_at).toLocaleDateString()}
       </div>
 
       {/* 추천 도서 */}
