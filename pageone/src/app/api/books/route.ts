@@ -7,11 +7,11 @@ export async function GET(req: Request) {
     const query = searchParams.get("query") || "";
 
     // Supabase에서 데이터 가져오기
-    let request = supabase.from("books").select("*");
-
-    if (query) {
-      request = request.ilike("title", `%${query}%`);
-    }
+    // title이랑 작가 정보도 검색 가능하게 수정
+    let request = supabase
+       .from("books").
+       select("*")
+       .or(`title.ilike.%${query}%,author.ilike.%${query}%`);
 
     const { data, error } = await request;
 

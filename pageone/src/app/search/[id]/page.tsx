@@ -22,7 +22,6 @@ const fetchRelatedBooks = async (author: string, excludeId: string) => {
     .select("*")
     .eq("author", author)
     .neq("id", excludeId)
-    .limit(3);
 
   if (error) throw new Error(error.message);
   return data;

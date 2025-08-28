@@ -36,17 +36,12 @@ export default function SearchPage() {
     setSearch(query);
   }, [searchParams]);
 
-  const { data: books, isLoading, error } = useQuery({
+  const { data: books, error } = useQuery({
     queryKey: ["books", search],
     queryFn: () => fetchBooks(search),
     enabled: search !== "", // search가 있을 때만 fetch
+    initialData: [],
   });
-
-  if (isLoading) return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <p className="text-center mt-8">로딩 중...</p>
-    </div>
-  );
 
   if (error) return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -78,7 +73,7 @@ export default function SearchPage() {
         </div>
       )}
       
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {books && books.length > 0 ? (
           books.map((book: any) => (
             <SearchCard key={book.id} {...book} />
