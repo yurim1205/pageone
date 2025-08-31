@@ -6,25 +6,10 @@ import { useSearchParams } from "next/navigation";
 import SearchCard from "@/components/search/searchCard";
 
 const fetchBooks = async (query: string) => {
-  try {
-    const res = await fetch(`/api/books?query=${encodeURIComponent(query)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`HTTP ${res.status}: ${errorText}`);
-    }
-    
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-};
+  const res = await fetch(`/api/books/search?query=${encodeURIComponent(query)}`);
+  if (!res.ok) throw new Error('API 호출 실패');
+  return res.json();
+}; 
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -75,8 +60,8 @@ export default function SearchPage() {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {books && books.length > 0 ? (
-          books.map((book: any) => (
-            <SearchCard key={book.id} {...book} />
+          books.map((book: any, index: number) => (
+            <SearchCard key={book.isbn || book.url || `book-${index}`} {...book} />
           ))
         ) : (
           <div className="text-center py-12">
