@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 
@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const auth = useAuthStore();
+  const { login, loading } = useAuthStore();
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -17,10 +17,10 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await auth.login(email, password);
+      await login(email, password);
       router.push("/");
     } catch (error: any) {
-      setError(error.message || "로그인 실패");
+      setError(error.message || "로그인에 실패했습니다.");
     }
   };
 
@@ -36,6 +36,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
               className="w-full border border-gray-300 rounded-md px-3 py-2 mb-5
                          focus:outline-none focus:border-black"
             />
@@ -47,18 +48,21 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
               className="w-full border border-gray-300 rounded-md px-3 py-2 mb-16
                          focus:outline-none focus:border-black"
             />
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-400 cursor-pointer mt-2"
+            disabled={loading}
+            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 
+                       disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer transition-colors"
           >
-            Login
+            {loading ? "로그인 중..." : "Login"}
           </button>
         </form>
 
