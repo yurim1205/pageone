@@ -23,39 +23,44 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full fixed top-0 left-0 z-50">
+    <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
       <div className="max-w-full mx-auto flex justify-between  p-4">
         {/* 로고 */}
         <Link href="/">
           <h1 className="text-3xl font-bold">PageOne</h1>
         </Link>
 
-        {/* 네비게이션 */}
         <nav className="flex space-x-4">
           <SearchBar onSearch={handleSearch} />
-          
+
           {user ? (
             // 로그인된 상태
             <>
               <span className="text-gray-500 mt-1">
                 <span className="text-black">{user.name}</span>님
               </span>
-              <Link href="/scrap" 
-                className="text-black hover:text-black mt-1">내 책장</Link>
               <button
-                onClick={()=>setIsModalOpen(true)}
+                onClick={() => setIsModalOpen(true)}
                 className="text-black hover:text-black mb-2 mt-1 cursor-pointer"
               >
                 로그아웃
               </button>
+              <Link href="/scrap" className="text-gray-500 hover:text-black mt-1">
+                내 책장
+              </Link>
             </>
           ) : (
             // 로그아웃된 상태
             <>
-              <Link href="/login"
-                className="text-gray-500 hover:text-black mt-1">로그인</Link>
-              <Link href="/signup" 
-                className="text-gray-500 hover:text-black mt-1">회원가입</Link>
+              <Link href="/login" className="text-gray-500 hover:text-black mt-1">
+                로그인
+              </Link>
+              <Link href="/signup" className="text-gray-500 hover:text-black mt-1">
+                회원가입
+              </Link>
+              <Link href="/scrap" className="text-gray-500 hover:text-black mt-1">
+                내 책장
+              </Link>
             </>
           )}
         </nav>
@@ -63,7 +68,7 @@ export default function Header() {
 
       {isModalOpen && (
         <div className="
-        fixed inset-0 flex bg-opacity-10 items-center justify-center z-[1000] backdrop-blur-[10px]">
+        fixed inset-0 flex bg-opacity-10 items-center justify-center z-[1000] backdrop-blur-[100px]">
           {/* 모달 박스 */}
           <div className="relative bg-white rounded-2xl shadow-xl p-6 w-80 text-center">
             <h2 className="text-lg font-semibold mb-4">로그아웃 하시겠습니까?</h2>

@@ -101,7 +101,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const session = JSON.parse(storedSession);
 
-      // SDK에 세션 복원
       await supabase.auth.setSession({
         access_token: session.access_token,
         refresh_token: session.refresh_token,

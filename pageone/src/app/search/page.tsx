@@ -37,10 +37,10 @@ export default function SearchPage() {
   );
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="p-4 max-w-[1200px] mx-auto mt-10">
       {search && (
         <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-2 text-center mt-10 mb-5">
+          <h1 className="text-2xl font-bold mb-2 text-center mt-10 mb-10">
             "{search}"에 대한 검색 결과
           </h1>
           <p className="text-gray-600">
@@ -61,7 +61,7 @@ export default function SearchPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {books && books.length > 0 ? (
           books.map((book: any, index: number) => (
-            <SearchCard key={book.isbn || book.url || `book-${index}`} {...book} />
+            <SearchCard key={`${book.isbn || book.url || 'book'}-${index}`} {...book} />
           ))
         ) : (
           <div className="text-center py-12">

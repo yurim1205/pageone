@@ -2,6 +2,10 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useBookmarkStore } from "@/store/useBookmarkStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { supabase } from "@/lib/supabaseClient";
+import toast from "react-hot-toast";
 
 export default function BookDetailPage() {
   const { id } = useParams(); // ISBN
@@ -41,7 +45,8 @@ export default function BookDetailPage() {
             <p className="text-gray-600 mb-4">{book.authors?.join(", ")}</p>
             <p className="text-gray-800 leading-relaxed">{book.contents || "내용 미리보기가 없습니다."}</p>
           </div>
-          <button className="w-full px-6 py-2 rounded-xl bg-gray-200 text-black shadow-lg hover:shadow-md transform transition-all duration-300 hover:-translate-y-1">
+          <button className="w-full px-6 py-2 rounded-xl bg-gray-200 text-black shadow-lg
+           hover:shadow-md transform transition-all duration-300 hover:-translate-y-1 cursor-pointer">
             내 책장에 담기
           </button>
         </div>
