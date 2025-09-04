@@ -4,8 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
-import {useAuthStore} from "@/store/useAuthStore";
-import { useEffect } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,10 +16,6 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  useEffect(()=>{
-    useAuthStore.getState().restoreSession();
-  }, []);
-
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>

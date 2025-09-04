@@ -95,27 +95,47 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   restoreSession: async () => {
-    const storedSession = sessionStorage.getItem("supabase_session");
-    if (!storedSession) return;
-
     try {
-      const session = JSON.parse(storedSession);
+      // Supabase 자체 세션 확인 (localStorage에서 자동 관리)
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error("Session get error:", error);
+        sessionStorage.removeItem("supabase_session");
+        set({ user: null });
+        return;
+      }
 
-      await supabase.auth.setSession({
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-      });
+      if (!session) {
+        // 세션이 없으면 저장된 세션도 제거
+        sessionStorage.removeItem("supabase_session");
+        set({ user: null });
+        return;
+      }
 
-      // users 테이블에서 사용자 정보 가져오기
-      const { data: userData } = await supabase
+      // 세션이 있으면 사용자 정보 조회
+      const { data: userData, error: userError } = await supabase
         .from("users")
         .select("*")
         .eq("id", session.user.id)
         .single();
 
+      if (userError) {
+        console.error("User data fetch error:", userError);
+        await supabase.auth.signOut();
+        sessionStorage.removeItem("supabase_session");
+        set({ user: null });
+        return;
+      }
+
+      // 세션 저장 (최신 토큰으로 업데이트)
+      sessionStorage.setItem("supabase_session", JSON.stringify(session));
       set({ user: userData });
+
     } catch (error) {
       console.error("Session restore failed:", error);
+      // 오류 발생 시 모든 세션 정보 제거
+      await supabase.auth.signOut();
       sessionStorage.removeItem("supabase_session");
       set({ user: null });
     }
