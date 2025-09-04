@@ -11,15 +11,19 @@ interface User {
 interface AuthState {
   user: User | null;
   loading: boolean;
+  isRestoring: boolean;
+  isLoggingOut: boolean;
   signup: (email: string, password: string, name: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   loading: false,
+  isRestoring: false,
+  isLoggingOut: false,
 
   signup: async (email, password, name) => {
     set({ loading: true });
@@ -89,12 +93,34 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: async () => {
-    await supabase.auth.signOut();
-    sessionStorage.removeItem("supabase_session");
-    set({ user: null });
+    const { isLoggingOut } = get();
+    
+    // 이미 로그아웃 중이면 중복 실행 방지
+    if (isLoggingOut) {
+      console.log('Logout already in progress, skipping');
+      return;
+    }
+    
+    console.log('Logout function called');
+    set({ isLoggingOut: true });
+    
+    try {
+      await supabase.auth.signOut();
+      sessionStorage.removeItem("supabase_session");
+      set({ user: null });
+    } finally {
+      set({ isLoggingOut: false });
+    }
   },
 
   restoreSession: async () => {
+    const { isRestoring } = get();
+    
+    // 이미 복원 중이면 중복 실행 방지
+    if (isRestoring) return;
+    
+    set({ isRestoring: true });
+    
     try {
       // Supabase 자체 세션 확인 (localStorage에서 자동 관리)
       const { data: { session }, error } = await supabase.auth.getSession();
@@ -102,14 +128,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (error) {
         console.error("Session get error:", error);
         sessionStorage.removeItem("supabase_session");
-        set({ user: null });
+        set({ user: null, isRestoring: false });
         return;
       }
 
       if (!session) {
         // 세션이 없으면 저장된 세션도 제거
         sessionStorage.removeItem("supabase_session");
-        set({ user: null });
+        set({ user: null, isRestoring: false });
         return;
       }
 
@@ -124,7 +150,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         console.error("User data fetch error:", userError);
         await supabase.auth.signOut();
         sessionStorage.removeItem("supabase_session");
-        set({ user: null });
+        set({ user: null, isRestoring: false });
         return;
       }
 
@@ -138,6 +164,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       await supabase.auth.signOut();
       sessionStorage.removeItem("supabase_session");
       set({ user: null });
+    } finally {
+      set({ isRestoring: false });
     }
   },
 }));

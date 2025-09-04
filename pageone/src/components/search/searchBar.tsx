@@ -16,31 +16,31 @@ interface SearchBarProps {
 
   return (
     <form
-        onSubmit={handleSubmit}
-        className="flex items-center bg-gray-200 rounded-[50px] p-1 max-w-[180px] mx-auto h-[32px]"
-        >
-    <label htmlFor="searchInput" className="sr-only">Search</label>
-    <input
-        type="text"
-        id="searchInput"
-        name="search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search"
-        className="w-full h-[40px] px-4 rounded-[50px] border-none outline-none"
-      />
-      <button
-        type="submit"
-        className="absolute right-52 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-10 h-10"
-      >
-        <img
-          src="/icon/search.png"
-          alt="Search"
-          className="w-8 h-8"
-        />
-      </button>
-</form>
+      onSubmit={handleSubmit}
+      className="relative mt-2 flex items-center bg-gray-200 rounded-full px-3 w-full max-w-[300px] mx-auto h-10"
+    >
+        <label htmlFor="searchInput" className="sr-only">Search</label>
+        <input
+            type="text"
+            id="searchInput"
+            name="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search"
+            className="w-full h-full pr-10 rounded-full bg-gray-200 border-none outline-none text-sm"
+          />
 
+        <button
+          type="submit"
+          className="absolute right-2 flex items-center justify-center w-6 h-6"
+        >
+          <img
+            src="/icon/search.png"
+            alt="Search"
+            className="w-5 h-5"
+          />
+        </button>
+    </form>
   );
 };
 

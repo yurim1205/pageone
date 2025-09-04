@@ -24,34 +24,38 @@ export default function Header() {
 
   return (
     <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
-      <div className="max-w-full mx-auto flex justify-between  p-4">
+      <div className="max-w-full mx-auto flex justify-between mt-2 p-4">
         {/* 로고 */}
         <Link href="/">
           <h1 className="text-3xl font-bold">PageOne</h1>
         </Link>
 
-        <nav className="flex space-x-4">
+        <nav className="flex space-x-4 ">
           <SearchBar onSearch={handleSearch} />
 
           {user ? (
             // 로그인된 상태
             <>
-              <span className="text-gray-500 mt-1">
+            <div className="flex items-center space-x-4 w-full">
+              <span className="text-gray-500">
                 <span className="text-black">{user.name}</span>님
               </span>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="text-black hover:text-black mb-2 mt-1 cursor-pointer"
+                className="text-gray-500 hover:text-black cursor-pointer"
               >
                 로그아웃
               </button>
-              <Link href="/scrap" className="text-gray-500 hover:text-black mt-1">
+              <Link href="/scrap" className="text-gray-500 hover:text-black">
                 내 책장
               </Link>
+            </div>
+
             </>
           ) : (
             // 로그아웃된 상태
             <>
+            <div className="flex items-center space-x-4 w-full">
               <Link href="/login" className="text-gray-500 hover:text-black mt-1">
                 로그인
               </Link>
@@ -61,6 +65,7 @@ export default function Header() {
               <Link href="/scrap" className="text-gray-500 hover:text-black mt-1">
                 내 책장
               </Link>
+              </div>
             </>
           )}
         </nav>
@@ -79,6 +84,7 @@ export default function Header() {
               >
                 확인
               </button>
+
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300"

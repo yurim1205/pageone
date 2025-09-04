@@ -8,39 +8,57 @@ import { useBookmarkStore } from '@/store/useBookmarkStore';
 import { supabase } from '@/lib/supabaseClient';
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { restoreSession, user, logout } = useAuthStore();
+  const { restoreSession, user, logout, isLoggingOut } = useAuthStore();
   const { loadBookmarks } = useBookmarkStore();
 
   useEffect(() => {
+    let mounted = true;
+    
     // 앱 시작 시 세션 복원
     restoreSession();
 
     // Supabase auth 상태 변화 리스너 설정
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event);
+        // 컴포넌트가 언마운트되었으면 처리하지 않음
+        if (!mounted) return;
         
-        if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
-          if (!session) {
-            // 세션이 없으면 로그아웃 처리
-            logout();
-          } else {
-            // 새로운 세션으로 사용자 정보 업데이트
-            restoreSession();
-          }
+        // 개발 환경에서만 로그 출력
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Auth state changed:', event, 'Session:', !!session, 'User:', session?.user?.id);
         }
         
-        if (event === 'SIGNED_IN') {
-          restoreSession();
+        switch (event) {
+          case 'SIGNED_OUT':
+            if (!session && !isLoggingOut) {
+              console.log('Executing logout due to SIGNED_OUT without session');
+              logout();
+            } else if (isLoggingOut) {
+              console.log('Skipping logout - already in progress');
+            }
+            break;
+          case 'SIGNED_IN':
+            if (session) {
+              console.log('Executing restoreSession due to SIGNED_IN');
+              restoreSession();
+            }
+            break;
+          case 'TOKEN_REFRESHED':
+            if (session) {
+              console.log('Executing restoreSession due to TOKEN_REFRESHED');
+              restoreSession();
+            }
+            break;
         }
       }
     );
 
     // 컴포넌트 언마운트 시 리스너 정리
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
-  }, [restoreSession, logout]);
+  }, []); // 의존성 배열을 비워서 한 번만 실행
 
   useEffect(() => {
     // 사용자가 로그인되면 북마크 로드
