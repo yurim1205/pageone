@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
+import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,10 +19,13 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>
+       <body className="min-h-screen flex flex-col">
         <Providers>
           <Header />
-          <main className="pt-16">{children}</main>
+          <main className="flex-1 pt-16">
+            {children}
+          </main>
+          <Footer />
         </Providers>
       </body>
     </html>

@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import SearchBar from 'components/search/searchBar';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useState } from 'react';
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname(); // 현재 경로 가져옴
   const { user, logout } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -23,20 +24,22 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
+    <header
+    className={`w-full fixed top-0 left-0 z-50 bg-white ${
+      pathname === '/' ? '' : 'shadow-md'
+    }`}
+  >
       <div className="max-w-full mx-auto flex justify-between mt-2 p-4">
         {/* 로고 */}
         <Link href="/">
           <h1 className="text-3xl font-bold">PageOne</h1>
         </Link>
 
-        <nav className="flex space-x-4 ">
-          <SearchBar onSearch={handleSearch} />
+        <nav className="flex items-center space-x-4 ml-auto">
+          {pathname !== '/' && <SearchBar onSearch={handleSearch} />}
 
           {user ? (
-            // 로그인된 상태
-            <>
-            <div className="flex items-center space-x-4 w-full">
+            <div className="flex items-center space-x-4">
               <span className="text-gray-500">
                 <span className="text-black">{user.name}</span>님
               </span>
@@ -50,12 +53,8 @@ export default function Header() {
                 내 책장
               </Link>
             </div>
-
-            </>
           ) : (
-            // 로그아웃된 상태
-            <>
-            <div className="flex items-center space-x-4 w-full">
+            <div className="flex items-center space-x-4">
               <Link href="/login" className="text-gray-500 hover:text-black mt-1">
                 로그인
               </Link>
@@ -65,8 +64,7 @@ export default function Header() {
               <Link href="/scrap" className="text-gray-500 hover:text-black mt-1">
                 내 책장
               </Link>
-              </div>
-            </>
+            </div>
           )}
         </nav>
       </div>
