@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* Literata 폰트 임포트 */
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/Literata-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/Literata-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,6 +25,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-literata: 'Literata', serif;
 }
 
 body {
