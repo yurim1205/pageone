@@ -9,15 +9,22 @@ export async function GET(req: NextRequest) {
       return NextResponse.json([], { status: 200 }); // 검색어 없으면 빈 배열 반환
     }
 
-    const KAKAO_KEY=process.env.KAKAO_REST_API_KEY;
+    const KAKAO_REST_API_KEY = process.env.KAKAO_REST_API_KEY;
 
-    const response = await fetch(
-      `https://dapi.kakao.com/v3/search/book?target=title&query=${query}`, 
-      {
-      headers: {
-        Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}`,
-      },
-    });
+if (!KAKAO_REST_API_KEY) {
+  console.error("❌ Kakao API Key is missing!");
+  return NextResponse.json({ error: "API key missing" }, { status: 500 });
+}
+
+const response = await fetch(
+  `https://dapi.kakao.com/v3/search/book?target=title&query=${query}`, 
+  {
+    headers: {
+      Authorization: `KakaoAK ${KAKAO_REST_API_KEY}`,
+    },
+  }
+);
+
     
     if (!response.ok) {
       return NextResponse.json({ error: '카카오 API 호출 실패' }, { status: response.status });
