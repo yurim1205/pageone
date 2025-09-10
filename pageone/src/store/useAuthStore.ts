@@ -69,19 +69,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         throw new Error(insertErrorMessage);
       }
 
-      // 세션 저장
-      if (data.session) {
-        sessionStorage.setItem("supabase_session", JSON.stringify(data.session));
-      }
-
-      set({
-        user: {
-          id: data.user.id,
-          email,
-          name,
-          created_at: data.user.created_at || new Date().toISOString(),
-        },
-      });
+      // 회원가입 성공 시 자동 로그인하지 않음
+      // Supabase 세션 제거하여 자동 로그인 방지
+      await supabase.auth.signOut();
+      sessionStorage.removeItem("supabase_session");
     } catch (error) {
       // 콘솔 에러 방지 - 필요한 경우에만 로그
       // console.error("Signup error:", error);
