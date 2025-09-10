@@ -36,7 +36,7 @@ export default function SignupPage() {
     <>
       <button
         onClick={() => router.push("/login")}
-        className="flex items-center text-sm text-gray-600 hover:text-black mb-6 mt-5 ml-5 cursor-pointer"
+        className="flex items-center text-sm text-gray-600 hover:text-black mb-6 mt-10 ml-5 cursor-pointer"
       >
         <ArrowLeftIcon className="w-6 h-6 mr-2" />
       </button>
