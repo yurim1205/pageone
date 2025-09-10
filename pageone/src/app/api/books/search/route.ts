@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
       `https://dapi.kakao.com/v3/search/book?target=title&query=${query}`, 
       {
       headers: {
-        Authorization: `KakaoAK ${KAKAO_KEY}`,
+        Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}`,
       },
     });
     
