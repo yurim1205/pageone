@@ -20,32 +20,22 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     // Supabase auth 상태 변화 리스너 설정
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        // 컴포넌트가 언마운트되었으면 처리하지 않음
         if (!mounted) return;
-        
-        // 개발 환경에서만 로그 출력
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Auth state changed:', event, 'Session:', !!session, 'User:', session?.user?.id);
-        }
-        
+         
         switch (event) {
           case 'SIGNED_OUT':
             if (!session && !isLoggingOut) {
-              console.log('Executing logout due to SIGNED_OUT without session');
               logout();
             } else if (isLoggingOut) {
-              console.log('Skipping logout - already in progress');
             }
             break;
           case 'SIGNED_IN':
             if (session) {
-              console.log('Executing restoreSession due to SIGNED_IN');
               restoreSession();
             }
             break;
           case 'TOKEN_REFRESHED':
             if (session) {
-              console.log('Executing restoreSession due to TOKEN_REFRESHED');
               restoreSession();
             }
             break;

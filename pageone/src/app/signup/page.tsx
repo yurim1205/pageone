@@ -15,10 +15,9 @@ export default function SignupPage() {
   const router = useRouter();
   const { signup, loading, user } = useAuthStore();
 
-  // 회원가입 성공 시 홈으로 리다이렉트
   useEffect(() => {
     if (user) {
-      router.push("/");
+      router.push("/login");
     }
   }, [user, router]);
 
@@ -26,30 +25,8 @@ export default function SignupPage() {
     e.preventDefault();
     setError(null);
 
-    // 유효성 검사
-    if (!name.trim()) {
-      setError("이름을 입력해주세요.");
-      return;
-    }
-    
-    if (!email.trim()) {
-      setError("이메일을 입력해주세요.");
-      return;
-    }
-    
-    if (email !== confirmEmail) {
-      setError("이메일이 일치하지 않습니다.");
-      return;
-    }
-    
-    if (password.length < 6) {
-      setError("비밀번호는 6자 이상이어야 합니다.");
-      return;
-    }
-
     try {
       await signup(email, password, name);
-      // user state가 업데이트되면 useEffect에서 자동으로 홈으로 리다이렉트
     } catch (error: any) {
       setError(error.message || "회원가입에 실패했습니다.");
     }

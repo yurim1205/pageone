@@ -33,11 +33,41 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         password,
         options: { data: { name } },
       });
-      if (error) throw error;
-      if (!data.user) throw new Error("사용자 생성 실패");
+      
+      if (error) {
+        let errorMessage = "회원가입 중 오류가 발생했습니다.";
+        
+        if (error.message.includes('User already registered') || 
+            error.message.includes('duplicate key') ||
+            error.message.includes('already registered')) {
+          errorMessage = "이미 등록된 이메일입니다.";
+        } else if (error.message.includes('Password should be at least')) {
+          errorMessage = "비밀번호는 최소 6자 이상이어야 합니다.";
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = "유효하지 않은 이메일 형식입니다.";
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
+      if (!data.user) throw new Error("사용자 생성에 실패했습니다.");
 
       // users 테이블에 추가
-      await supabase.from("users").insert([{ id: data.user.id, email, name }]);
+      const { error: insertError } = await supabase.from("users").insert([{ 
+        id: data.user.id, 
+        email, 
+        name 
+      }]);
+      
+      if (insertError) {
+        let insertErrorMessage = "사용자 정보 저장 중 오류가 발생했습니다.";
+        
+        if (insertError.message.includes('duplicate key')) {
+          insertErrorMessage = "이미 등록된 이메일입니다.";
+        }
+        
+        throw new Error(insertErrorMessage);
+      }
 
       // 세션 저장
       if (data.session) {
@@ -53,7 +83,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         },
       });
     } catch (error) {
-      console.error(error);
+      // 콘솔 에러 방지 - 필요한 경우에만 로그
+      // console.error("Signup error:", error);
       throw error;
     } finally {
       set({ loading: false });
@@ -97,11 +128,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     
     // 이미 로그아웃 중이면 중복 실행 방지
     if (isLoggingOut) {
-      console.log('Logout already in progress, skipping');
       return;
     }
     
-    console.log('Logout function called');
     set({ isLoggingOut: true });
     
     try {
@@ -126,7 +155,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error) {
-        console.error("Session get error:", error);
         sessionStorage.removeItem("supabase_session");
         set({ user: null, isRestoring: false });
         return;
@@ -147,7 +175,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         .single();
 
       if (userError) {
-        console.error("User data fetch error:", userError);
         await supabase.auth.signOut();
         sessionStorage.removeItem("supabase_session");
         set({ user: null, isRestoring: false });
@@ -159,7 +186,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user: userData });
 
     } catch (error) {
-      console.error("Session restore failed:", error);
       // 오류 발생 시 모든 세션 정보 제거
       await supabase.auth.signOut();
       sessionStorage.removeItem("supabase_session");
